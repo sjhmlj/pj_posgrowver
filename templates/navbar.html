@@ -1,0 +1,83 @@
+{% load static %}
+
+<div class="container mt-1 bg-light">
+  <div class="d-flex justify-content-end">
+    <ul class="no-bullets d-flex">
+      
+      {% if request.user.is_authenticated %}
+      <li class="">
+        <a class="text-decoration-none login" href="{% url 'accounts:detail' request.user.pk %}">내정보</a>
+      </li>
+      <li class="">
+        <a class="ms-2 text-decoration-none login" href="{% url 'accounts:logout' %}">로그아웃</a>
+      </li>
+      {% else %}
+      <li class="">
+        <a class="text-decoration-none login" href="{% url 'accounts:login' %}">로그인</a>
+      </li>
+      
+      <li class="">
+        <a class="ms-2 text-decoration-none signup" href="{% url 'accounts:signup' %}">회원가입</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+<header class="mt-5 mb-3 container">
+  <nav>
+    <a href="{% url 'articles:index' %}" class="logo-a bg-success px-5"><img src="{% static "logo/logo.png" %}" class="logo-img"></a>
+    <div>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2 text-secondary" type="search" placeholder="Search" aria-label="Search" value="통합검색">
+        <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
+      </form>
+    </div>
+  </nav>
+</header>
+<div class='container'>
+  <nav class="navbar navbar-expand-lg bg-light rounded">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <div class="nav-link sjh-dropdown">
+              기술
+              <ul class="w-100 sjh-dropdown-ul no-bullets rounded">
+                <li class="ps-2"><a class="dropdown-item" href="#">HTML</a></li>
+                <li class="ps-2"><a class="dropdown-item" href="#">CSS</a></li>
+                <li class="ps-2"><a class="dropdown-item" href="#">JS</a></li>
+                <hr class="my-2">
+                <li class="ps-2 pb-2"><a class="dropdown-item" href="#">Django</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">질문방</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">자유게시판</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled">Disabled</a>
+          </li>
+        </ul>
+        {% if request.user.is_authenticated %}
+        <div class="d-flex align-items-center">
+          {% if request.user.profile_image %}
+          <div><a href="{% url 'accounts:detail' request.user.pk %}">
+            <img src="{{ request.user.profile_image.url }}" class="profile-image rounded-circle me-2" alt="">
+          </a></div>
+          {% endif %}
+          <div><a href="" class="px-1 text-dark text-decoration-none">북마크</a></div>
+          <div><a href="" class="px-1 text-dark text-decoration-none">내 글</a></div>
+        </div>
+        {% endif %}
+        
+      </div>
+    </div>
+  </nav>
+</div>

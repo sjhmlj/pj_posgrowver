@@ -1,0 +1,57 @@
+h1 {
+  font-family: 'Chicago Makers Personal use', sans-serif;
+}
+
+
+ul.no-bullets {
+  list-style-type: none;
+  /* Remove bullets */
+  padding: 0;
+  /* Remove padding */
+  margin: 0;
+  /* Remove margins */
+}
+
+.login,
+.signup {
+  color: gray;
+  font-size: 0.8rem;
+}
+
+header>nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.logo-img {
+  height: 4rem;
+}
+
+.logo-a {
+  position: absolute;
+  left: 0;
+}
+
+footer {
+  height: 3rem;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+}
+
+.index-carousel-item {
+  padding-top: 50%;
+  position: relative;
+}
+
+.index-carousel-item>h1 {
+  position: absolute;
+  top: 50%
+}
+
+.profile-image {
+  width: 2rem;
+  height: 2rem;
+}

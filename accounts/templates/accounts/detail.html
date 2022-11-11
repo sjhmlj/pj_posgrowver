@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+{% block css %}
+<style>
+  .profile-box{
+    width: 40%;
+    background-color:grey;
+    border-radius: var(--bs-border-radius);
+    display:flex;
+    padding: 2rem;
+    box-shadow: 3px 3px 2px black;
+    position:relative;
+  }
+  .follow-btn{
+    position:absolute;
+    top: 40%;
+    right: 7%;
+  }
+  .a-none {
+    color: black;
+    text-decoration: none;
+  }
+</style>
+{% endblock css %}
+{% block content %}
+  <div class="d-flex justify-content-center mt-5">
+    <div class="profile-box">
+      {% if request.user != user %}
+      <form class="follow-btn" id="follow-form" data-user-id="{{ user.pk }}">
+        {% csrf_token %}
+        {% if request.user in user.followers.all %}
+        <input type="submit" class="btn btn-outline-dark" value="unfollow">
+        {% else %}
+        <input type="submit"class="btn btn-outline-dark" value="follow">
+        {% endif %}
+      </form>
+      {% endif %}
+      {% if request.user == user %}
+      <a href="{% url 'accounts:profile_update' %}">
+        <img src="{{request.user.profile_image.url}}" alt="" class="rounded-circle me-4">
+      </a>
+      {% else %}
+      <img src="{{request.user.profile_image.url}}" alt="" class="rounded-circle me-4">
+      {% endif %}
+      <div class="d-flex flex-column justify-content-between">
+        <div class="h3">
+          {{user.nickname}}
+        </div>
+        <div>
+
+          <div>
+            <a href="" class="a-none">
+              팔로잉 <span id="followings">{{followings_number}} </span>| 팔로워 <span id="followers">{{followers_number}}</span>
+            </a>
+          </div>
+          <div>
+            레벨
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+{% block script %}
+  <script>
+    const follow = document.querySelector('#follow-form')
+
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+      follow.addEventListener('submit', function (event) {
+        event.preventDefault()
+        const userId = event.target.dataset.userId
+        axios({
+          method: 'post',
+          url: `/accounts/follow/${userId}/`,
+          headers: {
+            'X-CSRFToken': csrftoken
+          }
+        })
+        .then((response) => {
+          const isFollowed = response.data.is_followed
+          const followBtn = document.querySelector('#follow-form > input[type=submit]')
+          if (isFollowed == true) {
+            followBtn.value = '언팔로우'
+          } else {
+            followBtn.value = '팔로우'
+
+          }
+          const followings = document.querySelector('#followings')
+          const followers = document.querySelector('#followers')
+          followings.innerText = response.data.followings_count
+          followers.innerText = response.data.followers_count
+            console.log(response.data)
+        })
+        .catch((error) => {
+          console.log(error.response)
+        })
+      })
+  </script>
+{% endblock script %}
