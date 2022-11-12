@@ -1,0 +1,46 @@
+{% extends 'articles/tech_base.html' %}
+{% block css %}
+<style>
+  .hero-body{
+    padding:1rem;
+    display:flex;
+    justify-content:space-between;
+  }
+  .hero-body .title{
+    margin-bottom:0;
+  }
+  .content{
+    padding-top:0.5rem;
+  }
+  .margin-bottom-0{
+    margin-bottom:0 !important;
+  }
+  .content{
+    display:flex;
+    justify-content:space-between;
+  }
+</style>
+{% endblock css %}
+{% block content %}
+  <div class="container is-max-desktop ">
+  {% for article in articles %}
+    <div class="box">
+      <section class="hero is-primary">
+        <div class="hero-body">
+          <p class="title"> {{ article.title}} </p>
+          <div>
+            <p class="" style="float:right;"> {{ article.created_at|date:"Y-m-d H:i"}}</p>
+            <p class=""> {{article.hashtag}}</p>
+          </div>
+          </div>
+      </section>
+
+      <div class="content">
+        <p class="margin-bottom-0"> {{ article.intro }}</p>
+
+        <a href="{% url 'articles:detail' article.id %}">Read more</a>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock content %}

@@ -1,0 +1,54 @@
+{% extends 'articles/tech_base.html' %}
+{% load articles_extras %}
+{% block css %}
+<style>
+  .margin-bottom-0{
+    margin-bottom:0
+  }
+  .margin-top-0{
+    margin-top:0
+  }
+  .margin-top-1{
+    margin-top:1rem;
+  }
+  .hero-body{
+    display:flex;
+    justify-content:space-between;
+  }
+  .rounded{
+    border-radius:1rem;
+  }
+</style>
+{% endblock css %}
+{% block content %}
+<div class="container">
+  <div class="box">
+    <section class="hero is-primary rounded">
+      <div class="hero-body">
+        <p class="title"> {{ article.title}} </p>
+        <div>
+
+          <p class="margin-bottom-0"> 생성일: {{ article.created_at|date:"Y-m-d H:i"}} </p>
+          <p class="margin-bottom-0"> 수정일: {{ article.updated_at|date:"Y-m-d H:i"}} </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="content intro">
+      <p class="margin-top-1"> {{ article.intro }}</p>
+      <hr class="margin-bottom-0"><hr class="margin-top-0 margin-bottom-0"><hr class="margin-top-0">
+      <p></p>
+    </div>
+    <div class="content">
+      {{article.body|convert_markdown|safe}}
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="box">
+    <form action="">
+
+    </form>
+  </div>
+</div>
+{% endblock content %}
