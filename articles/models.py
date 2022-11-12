@@ -7,16 +7,20 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 class Article(models.Model):
-    title = models.CharField(max_length=50)
-    content = models.TextField()
+    title = models.CharField(max_length=255)
+    intro = models.TextField()
+    body = models.TextField()
+    hashtag = models.CharField(max_length=255, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     like_users = models.ManyToManyField(get_user_model(), related_name="like_articles")
     bookmark = models.ManyToManyField(get_user_model())
 
 
 class Answer(models.Model):
     content = models.TextField()
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     like_users = models.ManyToManyField(get_user_model(), related_name="like_answers")
