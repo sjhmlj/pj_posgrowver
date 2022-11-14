@@ -5,6 +5,7 @@
     padding:1rem;
     display:flex;
     justify-content:space-between;
+    position:relative;
   }
   .hero-body .title{
     margin-bottom:0;
@@ -19,6 +20,12 @@
     display:flex;
     justify-content:space-between;
   }
+  .article-user{
+    position:absolute;
+    bottom:0;
+    right:1rem;
+    font-size: 0.7em;
+  }
 </style>
 {% endblock css %}
 {% block content %}
@@ -27,6 +34,7 @@
     <div class="box">
       <section class="hero is-primary">
         <div class="hero-body">
+          <div class="article-user">작성자: {{article.user}}</div>
           <p class="title"> {{ article.title}} </p>
           <div>
             <p class="" style="float:right;"> {{ article.created_at|date:"Y-m-d H:i"}}</p>
@@ -36,7 +44,13 @@
       </section>
 
       <div class="content">
-        <p class="margin-bottom-0"> {{ article.intro }}</p>
+        <p class="margin-bottom-0">
+          {% if article.intro.55 %}
+            {{article.intro|slice:":54"}}
+              ...
+            {% else %}
+              {{article.intro}}
+            {% endif %}</p>
 
         <a href="{% url 'articles:detail' article.id %}">Read more</a>
       </div>

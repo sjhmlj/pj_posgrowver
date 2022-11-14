@@ -14,9 +14,21 @@
   .hero-body{
     display:flex;
     justify-content:space-between;
+    position:relative;
+
   }
   .rounded{
     border-radius:1rem;
+  }
+  .article-user{
+    position:absolute;
+    bottom:0;
+    right:3rem;
+    font-size: 1em;
+  }
+  .comment-item{
+    padding: 0.5rem;
+    border-bottom : 1px solid black;
   }
 </style>
 {% endblock css %}
@@ -25,6 +37,7 @@
   <div class="box">
     <section class="hero is-primary rounded">
       <div class="hero-body">
+        <div class="article-user">작성자: {{article.user}}</div>
         <p class="title"> {{ article.title}} </p>
         <div>
 
@@ -44,11 +57,81 @@
     </div>
   </div>
 </div>
-<div class="container">
+<!-- 댓글 작성 -->
+<div class="container margin-top-1">
   <div class="box">
-    <form action="">
-
+    <form class="field" id="comment-form" data-article-id="{{article.id}}">
+      {% csrf_token %}
+      <label class="label">Write a comment</label>
+      <div class="control">
+        <div class="field">
+          <div class="control">
+            <textarea class="textarea is-small" placeholder="Small textarea" type="text" name="content" maxlength="100" required="" id="id_content"></textarea>
+          </div>
+        </div>
+        <div class="level">
+          <div class="level-left pl-2">{{request.user}}</div>
+          <div class="level-right">
+            <button class="button is-link " type="submit" >Submit</button>
+          </div>
+        </div>
+      </div>
     </form>
   </div>
 </div>
+<!-- 댓글 -->
+<div>
+  <div class="container margin-top-1" id="comment-container">
+    <p style="font-weight:bold;">Comments {{comments_count}}</p>
+    <div class="box" id="comment-box">
+      {% for comment in comments %}
+      <div class="comment-item columns">
+        <div class="column is-one-fifth">{{comment.user}}</div>
+        <div class="column is-three-fifths">{{comment.content}}</div>
+        {% if request.user == comment.user %}
+        <div class="column is-one-fifth p-1 is-flex is-justify-content-flex-end is-align-items-center"><div class="button is-small">X</div></div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 {% endblock content %}
+{% block script %}
+<script>
+  const commentForm = document.querySelector('#comment-form')
+  const commentContainer = document.querySelector('#comment-container')
+
+  const csrftoken = document
+    .querySelector('[name=csrfmiddlewaretoken]')
+    .value
+    commentForm
+    .addEventListener('submit', function (event) {
+      event.preventDefault()
+      const articleId = event
+        .target
+        .dataset
+        .articleId
+        axios({
+          method: 'post',
+          url: `/articles/writecomment/${articleId}/`,
+          headers: {
+            'X-CSRFToken': csrftoken
+          },
+          data: new FormData(commentForm),
+        })
+        .then((response) => {
+          const newComment = JSON.parse(response.data.newcomment)
+          const commentBox = document.querySelector("#comment-box")
+          const newCommentDiv = document.createElement('div');
+          newCommentDiv.innerText = newComment.content;
+          commentBox.appendChild(newCommentDiv);
+          console.log(newComment)
+        })
+        .catch((error) => {
+          console.log(error)
+          console.log("error")
+        })
+      })
+</script>
+{% endblock script %}
