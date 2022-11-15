@@ -28,12 +28,12 @@
   }
   .comment-item{
     padding: 0.5rem;
-    border-bottom : 1px solid black;
+    border-bottom : 1px solid grey;
   }
 </style>
 {% endblock css %}
 {% block content %}
-<div class="container">
+<div class="container" data-article-id="{{article.id}}" id="article_container">
   <div class="box">
     <section class="hero is-primary rounded">
       <div class="hero-body">
@@ -55,6 +55,28 @@
     <div class="content">
       {{article.body|convert_markdown|safe}}
     </div>
+    {% if article.user == request.user %}
+    <div class="is-flex is-justify-content-center">
+      <a class="button" id="article_update" href="{% url 'articles:update' article.pk %}">수정</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+<!-- 댓글 -->
+<div>
+  <div class="container margin-top-1" id="comment-container">
+    <p style="font-weight:bold;">Comments {{comments_count}}</p>
+    <div class="box" id="comment-box">
+      {% for comment in comments %}
+      <div class="comment-item columns" data-comment-id="{{comment.id}}" id="comment_{{comment.id}}">
+        <div class="column is-one-fifth">{{comment.user}}</div>
+        <div class="column is-three-fifths">{{comment.content}}</div>
+        {% if request.user == comment.user %}
+        <div class="column is-one-fifth p-1 is-flex is-justify-content-flex-end is-align-items-center"><div class="button is-small" onclick="deleteComment({{comment.id}})">X</div></div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 <!-- 댓글 작성 -->
@@ -66,34 +88,17 @@
       <div class="control">
         <div class="field">
           <div class="control">
-            <textarea class="textarea is-small" placeholder="Small textarea" type="text" name="content" maxlength="100" required="" id="id_content"></textarea>
+            <textarea class="textarea is-small" placeholder="Small textarea" type="text" name="content" maxlength="100" required id="id_content"></textarea>
           </div>
         </div>
         <div class="level">
           <div class="level-left pl-2">{{request.user}}</div>
           <div class="level-right">
-            <button class="button is-link " type="submit" >Submit</button>
+              <button class="button is-link " type="submit" >Submit</button>
           </div>
         </div>
       </div>
     </form>
-  </div>
-</div>
-<!-- 댓글 -->
-<div>
-  <div class="container margin-top-1" id="comment-container">
-    <p style="font-weight:bold;">Comments {{comments_count}}</p>
-    <div class="box" id="comment-box">
-      {% for comment in comments %}
-      <div class="comment-item columns">
-        <div class="column is-one-fifth">{{comment.user}}</div>
-        <div class="column is-three-fifths">{{comment.content}}</div>
-        {% if request.user == comment.user %}
-        <div class="column is-one-fifth p-1 is-flex is-justify-content-flex-end is-align-items-center"><div class="button is-small">X</div></div>
-        {% endif %}
-      </div>
-      {% endfor %}
-    </div>
   </div>
 </div>
 {% endblock content %}
@@ -102,36 +107,65 @@
   const commentForm = document.querySelector('#comment-form')
   const commentContainer = document.querySelector('#comment-container')
 
-  const csrftoken = document
-    .querySelector('[name=csrfmiddlewaretoken]')
-    .value
-    commentForm
-    .addEventListener('submit', function (event) {
-      event.preventDefault()
-      const articleId = event
-        .target
-        .dataset
-        .articleId
-        axios({
-          method: 'post',
-          url: `/articles/writecomment/${articleId}/`,
-          headers: {
-            'X-CSRFToken': csrftoken
-          },
-          data: new FormData(commentForm),
-        })
-        .then((response) => {
-          const newComment = JSON.parse(response.data.newcomment)
-          const commentBox = document.querySelector("#comment-box")
-          const newCommentDiv = document.createElement('div');
-          newCommentDiv.innerText = newComment.content;
-          commentBox.appendChild(newCommentDiv);
-          console.log(newComment)
-        })
-        .catch((error) => {
-          console.log(error)
-          console.log("error")
-        })
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  commentForm.addEventListener('submit', function (event) {
+    event.preventDefault()
+    const articleId = event
+      .target
+      .dataset
+      .articleId
+      axios({
+        method: 'post',
+        url: `/articles/writecomment/${articleId}/`,
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        data: new FormData(commentForm),
       })
+      .then((response) => {
+        const newComment = JSON.parse(response.data.newcomment)
+        const user = response.data.user
+        const commentBox = document.querySelector("#comment-box")
+        const newCommentDiv = document.createElement('div');
+        newCommentDiv.innerHTML = `
+        <div class="comment-item columns" data-comment-id="${newComment.id}" id="comment_${newComment.id}">
+          <div class="column is-one-fifth">${user}</div>
+          <div class="column is-three-fifths">${newComment.content}</div>
+        </div>
+          `;
+        commentBox.appendChild(newCommentDiv);
+        const textArea = document.querySelector("#id_content")
+        console.log(textArea.getAttribute("value"))
+        textArea.value = "";
+      })
+      .catch((error) => {
+        console.log(error)
+        console.log("writecomment error")
+      })
+    })
+  function deleteComment(value){
+    const articleId = document.querySelector("#article_container").dataset.articleId
+    const comment_id = value;
+    const delete_warning = confirm('댓글을 삭제하시겠습니까?');
+    if (delete_warning == true){
+      axios({
+        method: 'post',
+        url: `/articles/deletecomment/${articleId}/${comment_id}/`,
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+      })
+      .then((response) => {
+        const commentBox = document.getElementById(`comment_${comment_id}`);
+        console.log("commentBox:", commentBox);
+        commentBox.remove();
+      })
+      .catch((error) => {
+        console.log(error)
+        console.log("deletecomment error")
+      })
+    }
+  }
+
 </script>
 {% endblock script %}

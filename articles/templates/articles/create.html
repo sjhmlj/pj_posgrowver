@@ -1,0 +1,36 @@
+{% extends 'articles/tech_base.html' %}
+
+{% block content %}
+<form action="{% url 'articles:create'%}" method="POST">
+  {% csrf_token %}
+  <div class="container">
+    <div class="field">
+      <label for="id_title" class="label">Title:</label>
+      <div class="control">
+        <input class="input" type="text" placeholder="title" name="title"  maxlength="40" required id="id_title">
+      </div>
+    </div>
+    <div class="field">
+      <label for="id_intro">Intro:</label>
+      <div class="control">
+        <textarea class="textarea" placeholder="intro" rows="3" name="intro" cols="40" required id="id_intro"></textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label for="id_body">Body:</label>
+      <div class="control">
+        <textarea class="textarea" placeholder="content. markdown rule" name="body" cols="40" rows="25" required id="id_body">{{article.body}}</textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label for="id_hashtag">Hashtag:</label>
+      <div class="control">
+        <input class="input" type="text" placeholder="ex) #django" name="hashtag" maxlength="255" id="id_hashtag">
+      </div>
+    </div>
+    <div class="is-flex is-justify-content-flex-end">
+      <button class="button is-primary" type="submit">submit</button>
+    </div>
+  </div>
+</form>
+{% endblock content %}

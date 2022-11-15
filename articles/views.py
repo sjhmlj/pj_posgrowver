@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Article, Comment
 from django.http import JsonResponse
-from .forms import CommentForm
+from .forms import CommentForm, ArticleForm
 from django.contrib.auth.decorators import login_required
 
 
@@ -30,7 +30,7 @@ def detail(request, pk):
         "article": article,
         "comments": comments,
         "commentform": CommentForm(),
-        "comments_count": Comment.objects.count(),
+        "comments_count": Comment.objects.filter(article=article).count(),
     }
     return render(request, "articles/detail.html", context)
 
@@ -55,6 +55,44 @@ def writecomment(request, pk):
 
             context = {
                 "newcomment": json.dumps(model_dict, cls=DjangoJSONEncoder),
-                "comments_count": Comment.objects.count(),
+                "user": str(request.user.username),
             }
             return JsonResponse(context)
+
+
+@login_required
+def deletecomment(request, article_pk, comment_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    Comment.objects.get(id=comment_pk).delete()
+    context = {}
+    return JsonResponse(context)
+
+
+@login_required
+def update(request, pk):
+    article = get_object_or_404(Article, pk=pk)
+
+    if request.method == "POST" and request.user == article.user:
+        form = ArticleForm(request.POST, request.FILES, instance=article)
+        if form.is_valid():
+            form.save()
+            return redirect("articles:detail", pk)
+
+    context = {
+        "form": ArticleForm(instance=article),
+        "article": article,
+    }
+    return render(request, "articles/update.html", context)
+
+
+def create(request):
+    if request.method == "POST":
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.user = request.user
+            article.save()
+            return redirect("articles:detail", article.id)
+
+    context = {"form": ArticleForm()}
+    return render(request, "articles/create.html", context)

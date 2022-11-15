@@ -60,7 +60,7 @@
         <div class="navbar-item">
           <div class="buttons">
             {% if request.user.is_superuser %}
-            <a class="button is-light">
+            <a class="button is-light" href="{% url 'articles:create' %}">
               글쓰기
             </a>
             {% endif %}
