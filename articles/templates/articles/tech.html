@@ -26,10 +26,28 @@
     right:1rem;
     font-size: 0.7em;
   }
+  .menu {
+    position:absolute;
+    top: 15%;
+    left: 12%;
+  }
 </style>
 {% endblock css %}
 {% block content %}
-  <div class="container is-max-desktop ">
+<!-- side menu -->
+<aside class="menu">
+  <p class="menu-label">
+    Web
+  </p>
+  <ul class="menu-list">
+    <li><a href="{% url 'articles:tech_html' %}">HTML</a></li>
+    <li><a href="{% url 'articles:tech_css' %}">CSS</a></li>
+    <li><a href="{% url 'articles:tech_js' %}">JavaScript</a></li>
+    <li><a href="{% url 'articles:tech_django' %}">Django</a></li>
+  </ul>
+</aside>
+<!-- 본문 -->
+<div class="container is-max-desktop ">
   {% for article in articles %}
     <div class="box">
       <section class="hero is-primary">

@@ -23,19 +23,19 @@
     </ul>
   </div>
 </div>
-<header class="mt-5 mb-3 container">
+<header class="mt-5 mb-3 container" >
   <nav>
-    <a href="{% url 'articles:index' %}" class="logo-a bg-success px-5"><img src="{% static "logo/logo.png" %}" class="logo-img"></a>
+    <a href="{% url 'articles:index' %}" class="logo-a bg-success rounded px-5"><img src="{% static "logo/logo.png" %}" class="logo-img "></a>
     <div>
       <form class="d-flex" role="search">
-        <input class="form-control me-2 text-secondary" type="search" placeholder="Search" aria-label="Search" value="통합검색">
+        <input class="form-control me-2 text-secondary" type="search" placeholder="통합검색" aria-label="Search">
         <button class="btn btn-outline-success" type="submit"><i class="bi bi-search"></i></button>
       </form>
     </div>
   </nav>
 </header>
 <div class='container'>
-  <nav class="navbar navbar-expand-lg bg-light rounded">
+  <nav class="navbar navbar-expand-lg rounded" style="background-color: #e3f2fd;">
     <div class="container-fluid">
       
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -67,6 +67,7 @@
             <img src="{{ request.user.profile_image.url }}" class="profile-image rounded-circle me-2" alt="">
           </a></div>
           {% endif %}
+          <div><a href="" class="px-1 text-dark text-decoration-none">비밀글</a></div>
           <div><a href="" class="px-1 text-dark text-decoration-none">북마크</a></div>
           <div><a href="" class="px-1 text-dark text-decoration-none">내 글</a></div>
         </div>

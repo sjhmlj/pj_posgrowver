@@ -9,15 +9,15 @@
     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
   </div>
-  <div class="carousel-inner bg-secondary mt-5">
+  <div class="carousel-inner bg-success mt-5">
     <div class="carousel-item index-carousel-item active">
-      <h1 class="w-100 text-center">더 좋은 사람이 되기 위해 나아갑니다.</h1>
+      <h1 class="w-100 text-center">더 좋은 사람이 되고 싶습니다.</h1>
     </div>
     <div class="carousel-item index-carousel-item">
-      <h1 class="w-100 text-center">더 발전된 지식을 배웁니다.</h1>
+      <h1 class="w-100 text-center">지식을 발전시키겠습니다.</h1>
     </div>
     <div class="carousel-item index-carousel-item">
-      <h1 class="w-100 text-center">배려하고 격려합니다.</h1>
+      <h1 class="w-100 text-center">배려하고 격려하겠습니다.</h1>
     </div>
   </div>
   <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
@@ -29,6 +29,20 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
+<div class="mt-3">
+  <div class="row row-cols-4 gx-5">
+    {% for cheer in cheers %}
+    <div>
 
-
+      <div class="card ">
+        <div class="card-body">
+          <h5 class="card-title"></h5>
+          <p class="card-text py-5">{{cheer.content}}</p>
+          <a class="card-link">Card link</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
 {% endblock content %}
