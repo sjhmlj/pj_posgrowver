@@ -1,5 +1,5 @@
 h1 {
-  font-family: 'Chicago Makers Personal use', sans-serif;
+  /* font-family: 'Chicago Makers Personal use', sans-serif; */
 }
 
 
@@ -37,8 +37,8 @@ header>nav {
 footer {
   height: 3rem;
   width: 100%;
-  position: fixed;
-  bottom: 0;
+  /* position: absolute;
+  bottom: 0; */
 }
 
 .index-carousel-item {

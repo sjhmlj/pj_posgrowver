@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Article, Comment
+from .models import Article, Comment, Cheer, Question
 from django.http import JsonResponse
 from .forms import CommentForm, ArticleForm
 from django.contrib.auth.decorators import login_required
 
 
 def index(request):
-    context = {}
+    context = {
+        "cheers": Cheer.objects.all(),
+    }
     return render(request, "articles/index.html", context)
 
 
@@ -20,7 +22,7 @@ def tech(request):
         "articles": articles,
         "now": now,
     }
-    return render(request, "articles/tech_category.html", context)
+    return render(request, "articles/tech.html", context)
 
 
 def detail(request, pk):
@@ -85,6 +87,7 @@ def update(request, pk):
     return render(request, "articles/update.html", context)
 
 
+@login_required
 def create(request):
     if request.method == "POST":
         form = ArticleForm(request.POST)
@@ -96,3 +99,55 @@ def create(request):
 
     context = {"form": ArticleForm()}
     return render(request, "articles/create.html", context)
+
+
+@login_required
+def deletearticle(request, pk):
+    if request.method == "POST":
+        article = get_object_or_404(Article, pk=pk)
+        article.delete()
+        return redirect("articles:tech")
+
+
+def tech_html(request):
+    articles = Article.objects.filter(hashtag__contains="#html")
+    context = {
+        "articles": articles,
+    }
+    return render(request, "articles/tech_element.html", context)
+
+
+def tech_css(request):
+    articles = Article.objects.filter(hashtag__contains="#css")
+    context = {
+        "articles": articles,
+    }
+
+    return render(request, "articles/tech_element.html", context)
+
+
+from django.db.models import Q
+
+
+def tech_js(request):
+    articles = Article.objects.filter(hashtag__contains="#js") | Article.objects.filter(
+        hashtag__contains="#javascript"
+    )
+    context = {
+        "articles": articles,
+    }
+    return render(request, "articles/tech_element.html", context)
+
+
+def tech_django(request):
+    articles = Article.objects.filter(hashtag__contains="#django")
+    context = {
+        "articles": articles,
+    }
+    return render(request, "articles/tech_element.html", context)
+
+
+def question(request):
+    questions = Question.objects.all()
+    context = {}
+    return render(request, "articles/question.html", context)

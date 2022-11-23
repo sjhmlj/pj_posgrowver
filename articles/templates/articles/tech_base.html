@@ -14,17 +14,22 @@
     .pos-tech-nav{
       padding-bottom:2rem;
     }
+    .navbar-search{
+      height:70%;
+      border: 0.5px solid gray;
+      border-radius:0.5rem;
+    }
   </style>
   {% block css %}{% endblock css %}
 </head>
 <body>
   <!-- navbar -->
   <div class="container pos-tech-nav">
-  <nav class="navbar" style="vertical-align:middle;"role="navigation" aria-label="main navigation">
+  <nav class="navbar mt-3" style="vertical-align:middle;"role="navigation" aria-label="main navigation">
     
   
     <div id="navbarBasicExample" class="navbar-menu">
-      <div class="navbar-start">
+      <div class="navbar-start is-flex-direction-row is-align-items-center">
         <a class="navbar-item pos-logo" href="{% url 'articles:index' %}">
           Posgrowver
         </a>
@@ -32,29 +37,14 @@
         <a class="navbar-item" href="{% url 'articles:tech' %}">
           Documentation
         </a>
-  
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link">
-            More
-          </a>
-  
-          <div class="navbar-dropdown">
-            <a class="navbar-item">
-              HTML
-            </a>
-            <a class="navbar-item">
-              CSS
-            </a>
-            <a class="navbar-item">
-              JavaScript
-            </a>
-            <hr class="navbar-divider">
-            <a class="navbar-item">
-              Django
-            </a>
-          </div>
-        </div>
+        <form class="navbar-item" role="search">
+          <input type="search" class="navbar-search navbar-item">
+          <button class="ml-1 button is-small" type="submit">검색</button>
+        </form>
+        
       </div>
+
+
   
       <div class="navbar-end">
         <div class="navbar-item">
