@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load articles_extras %}
+{% block css %}
+<style>
+  .margin-bottom-0{
+    margin-bottom:0
+  }
+  .margin-top-0{
+    margin-top:0
+  }
+  .margin-top-1{
+    margin-top:1rem;
+  }
+  .hero-body{
+    display:flex;
+    justify-content:space-between;
+    position:relative;
+
+  }
+  .rounded{
+    border-radius:1rem;
+  }
+  .article-user{
+    position:absolute;
+    bottom:0;
+    right:3rem;
+    font-size: 1em;
+  }
+  .comment-item{
+    padding: 0.5rem;
+    border-bottom : 1px solid grey;
+  }
+</style>
+{% endblock css %}
+{% block content %}
+<div class="container" data-article-id="{{question.id}}" id="article_container">
+  <div class="box p-3">
+    <section class="hero is-primary rounded">
+      <div class="hero-body">
+        <p class="h2"> {{ question.title}} </p>
+        <div>
+          
+          <p class="margin-bottom-0"> 생성일: {{ question.created_at|date:"Y-m-d H:i"}} </p>
+          <p class="margin-bottom-0"> 수정일: {{ question.updated_at|date:"Y-m-d H:i"}} </p>
+        </div>
+      </div>
+    </section>
+    
+    <div class="content intro">
+      <div class="d-flex justify-content-between">
+        <p class="margin-top-1"> {{ question.intro }}</p>
+        <p class="">작성자: {{question.user}}</p>
+      </div>
+      <hr class="margin-bottom-0"><hr class="margin-top-0">
+      <p></p>
+    </div>
+    <div class="content">
+      {{question.body|convert_markdown|safe}}
+    </div>
+    {% if question.user == request.user %}
+    <div class="is-flex is-justify-content-center">
+      {% comment %} <a class="button" id="article_update" href="{% url 'question:update' article.pk %}">수정</a> {% endcomment %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+<!-- 답글 -->
+<hr>
+<div>
+  {% for answer in answers %}
+    <div>
+      {{answer.content}} {{answer.user}}
+    </div>
+  {% endfor %}
+</div>
+<hr>
+<!-- 답글 작성 -->
+<div class="container">
+  <form class="mb-3" id="answer-form">
+    {% csrf_token %}
+    <label for="exampleFormControlTextarea1" class="form-label">Your Answer</label>
+    <textarea class="form-control" id="exampleFormControlTextarea1" rows="10"></textarea>
+    <div class="col-auto mt-1">
+      <button type="submit" class="btn btn-primary mb-3">Submit</button>
+    </div>
+  </form>
+</div>
+<!-- 댓글 -->
+<div>
+  <div class="container margin-top-1" id="comment-container">
+    <p style="font-weight:bold;">Comments {{comments_count}}</p>
+    <div class="box" id="comment-box">
+      {% for comment in comments %}
+      <div class="comment-item columns" data-comment-id="{{comment.id}}" id="comment_{{comment.id}}">
+        <div class="column is-one-fifth">{{comment.user}}</div>
+        <div class="column is-three-fifths">{{comment.content}}</div>
+        {% if request.user == comment.user %}
+        <div class="column is-one-fifth p-1 is-flex is-justify-content-flex-end is-align-items-center"><div class="button is-small" onclick="deleteComment({{comment.id}})">X</div></div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<!-- 댓글 작성 -->
+<div class="container margin-top-1">
+  <div class="box">
+    <form class="field" id="comment-form" data-article-id="{{question.id}}">
+      {% csrf_token %}
+      <label class="label">Write a comment</label>
+      <div class="control">
+        <div class="field">
+          <div class="control">
+            <textarea class="textarea is-small" placeholder="Small textarea" type="text" name="content" maxlength="100" required id="id_content"></textarea>
+          </div>
+        </div>
+        <div class="level">
+          <div class="level-left pl-2">{{request.user}}</div>
+          <div class="level-right">
+              <button class="button is-link " type="submit" >Submit</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+  const commentForm = document.querySelector('#comment-form')
+  const commentContainer = document.querySelector('#comment-container')
+
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  commentForm.addEventListener('submit', function (event) {
+    event.preventDefault()
+    const articleId = event
+      .target
+      .dataset
+      .articleId
+      axios({
+        method: 'post',
+        url: `/articles/writecomment/${articleId}/`,
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+        data: new FormData(commentForm),
+      })
+      .then((response) => {
+        const newComment = JSON.parse(response.data.newcomment)
+        const user = response.data.user
+        const commentBox = document.querySelector("#comment-box")
+        const newCommentDiv = document.createElement('div');
+        newCommentDiv.innerHTML = `
+        <div class="comment-item columns" data-comment-id="${newComment.id}" id="comment_${newComment.id}">
+          <div class="column is-one-fifth">${user}</div>
+          <div class="column is-three-fifths">${newComment.content}</div>
+        </div>
+          `;
+        commentBox.appendChild(newCommentDiv);
+        const textArea = document.querySelector("#id_content")
+        console.log(textArea.getAttribute("value"))
+        textArea.value = "";
+      })
+      .catch((error) => {
+        console.log(error)
+        console.log("writecomment error")
+      })
+    })
+  function deleteComment(value){
+    const articleId = document.querySelector("#article_container").dataset.articleId
+    const comment_id = value;
+    const delete_warning = confirm('댓글을 삭제하시겠습니까?');
+    if (delete_warning == true){
+      axios({
+        method: 'post',
+        url: `/articles/deletecomment/${articleId}/${comment_id}/`,
+        headers: {
+          'X-CSRFToken': csrftoken
+        },
+      })
+      .then((response) => {
+        const commentBox = document.getElementById(`comment_${comment_id}`);
+        console.log("commentBox:", commentBox);
+        commentBox.remove();
+      })
+      .catch((error) => {
+        console.log(error)
+        console.log("deletecomment error")
+      })
+    }
+  }
+
+</script>
+{% endblock script %}

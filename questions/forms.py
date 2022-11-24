@@ -1,12 +1,20 @@
-from .models import Article, Comment
+from .models import Answer, Question, Comment
 from django import forms
 
 
-class ArticleForm(forms.ModelForm):
+class QuestionForm(forms.ModelForm):
     class Meta:
-        model = Article
+        model = Question
         fields = "__all__"
         exclude = ["bookmark", "like_users", "user"]
+
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = [
+            "content",
+        ]
 
 
 class CommentForm(forms.ModelForm):
