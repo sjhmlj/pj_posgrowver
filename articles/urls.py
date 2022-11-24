@@ -20,5 +20,4 @@ urlpatterns = [
     path("update/<int:pk>/", views.update, name="update"),
     path("create/", views.create, name="create"),
     path("deletearticle/<int:pk>/", views.deletearticle, name="deletearticle"),
-    path("question/", views.question, name="question"),
 ]

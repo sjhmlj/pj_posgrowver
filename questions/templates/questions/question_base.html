@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <title>Document</title>
+  {% block css %}{% endblock css %}
+</head>
+<body>
+  <div class="container pos-tech-nav">
+    <nav class="navbar mt-3" style="vertical-align:middle;"role="navigation" aria-label="main navigation">
+      
+    
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start is-flex-direction-row is-align-items-center">
+          <a class="navbar-item pos-logo" href="{% url 'articles:index' %}">
+            Posgrowver
+          </a>
+    
+          <a class="navbar-item" href="{% url 'questions:question' %}">
+            Documentation
+          </a>
+          <form class="navbar-item" role="search">
+            <input type="search" class="navbar-search navbar-item">
+            <button class="ml-1 button is-small" type="submit">검색</button>
+          </form>
+          
+        </div>
+  
+  
+    
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              {% if request.user.is_superuser %}
+              <a class="button is-light" href="{% url 'articles:create' %}">
+                글쓰기
+              </a>
+              {% endif %}
+              <a class="button is-primary">
+                <strong>오늘도 화이팅</strong>
+              </a>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+    {% block content %}{% endblock content %}
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  {% block script %}{% endblock script %}
+</body>
+</html>

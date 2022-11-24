@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Article, Comment, Cheer, Question
+from .models import Article, Comment, Cheer
 from django.http import JsonResponse
 from .forms import CommentForm, ArticleForm
 from django.contrib.auth.decorators import login_required
@@ -145,9 +145,3 @@ def tech_django(request):
         "articles": articles,
     }
     return render(request, "articles/tech_element.html", context)
-
-
-def question(request):
-    questions = Question.objects.all()
-    context = {}
-    return render(request, "articles/question.html", context)
